@@ -33,7 +33,7 @@ public class LevelPlayingState extends State {
         System.out.println("Entering Level " + level.getLevelNumber());
         
         // Initialize UI
-        lifeSupportBar = new LifeSupportBar(20, 20, 400, 30);
+        lifeSupportBar = new LifeSupportBar( 30, 30, 350, 30);
         timer = new Timer(GameApplication.LOGICAL_WIDTH - 170, 40);
         interactionPrompt = new InteractionPrompt();
     }

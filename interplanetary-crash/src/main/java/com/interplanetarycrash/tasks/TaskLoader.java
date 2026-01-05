@@ -1,5 +1,7 @@
 package com.interplanetarycrash.tasks;
 
+import com.interplanetarycrash.core.Game;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -23,6 +25,7 @@ public class TaskLoader {
      * @param filename Filename relative to assets/tasks/ (e.g. "level1_module1.txt")
      * @return Loaded task or null if error
      */
+
     public static Task loadTask(String filename) {
         try {
             // Try to load from resources

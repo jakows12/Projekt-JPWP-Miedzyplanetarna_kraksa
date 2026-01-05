@@ -1,6 +1,7 @@
 package com.interplanetarycrash.ui;
 
 import com.interplanetarycrash.rendering.GameRenderer;
+import com.interplanetarycrash.assets.AssetManager;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
@@ -20,7 +21,9 @@ public class LifeSupportBar {
         this.y = y;
         this.width = width;
         this.height = height;
-        this.labelFont = Font.font("Monospaced", 16);
+
+        AssetManager asset = AssetManager.getInstance();
+        this.labelFont = asset.getFont("retro");
     }
     
     /**

@@ -1,6 +1,7 @@
 package com.interplanetarycrash.ui;
 
 import com.interplanetarycrash.rendering.GameRenderer;
+import com.interplanetarycrash.assets.AssetManager;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
@@ -15,7 +16,9 @@ public class Timer {
     public Timer(double x, double y) {
         this.x = x;
         this.y = y;
-        this.font = Font.font("Monospaced", 24);
+        
+        AssetManager asset = AssetManager.getInstance();
+        this.font = asset.getFont("retro");
     }
     
     /**

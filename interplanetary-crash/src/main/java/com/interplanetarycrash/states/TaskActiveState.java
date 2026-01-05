@@ -102,48 +102,7 @@ public class TaskActiveState extends State {
         task.render(renderer);
         
         // Overlay life support and time (always visible)
-        renderOverlayUI(renderer);
-    }
-    
-    /**
-     * Render life support bar and timer overlay
-     */
-    private void renderOverlayUI(GameRenderer renderer) {
-        // Small life support indicator in corner
-        double barWidth = 200;
-        double barHeight = 20;
-        double x = 20;
-        double y = 20;
-        
-        // Background
-        renderer.fillRect(x, y, barWidth, barHeight, GameRenderer.RETRO_BACKGROUND);
-        
-        // Fill
-        double fillWidth = barWidth * (level.getLifeSupport() / level.getMaxLifeSupport());
-        renderer.fillRect(x, y, fillWidth, barHeight, GameRenderer.RETRO_GREEN);
-        
-        // Border
-        renderer.drawRect(x, y, barWidth, barHeight, GameRenderer.RETRO_GREEN);
-        
         lifeSupportBar.render(renderer, level.getLifeSupportPercentage());
         timer.render(renderer, level.getElapsedTime());
-
-        /* 
-        renderer.drawText(
-            String.format("LIFE: %.0f%%", level.getLifeSupportPercentage()),
-            x,
-            y - 5,
-            game.getAssetManager().getFont("retro_small"),
-            GameRenderer.RETRO_GREEN
-        );
-        
-        // Timer
-        renderer.drawText(
-            String.format("TIME: %.1fs", level.getElapsedTime()),
-            x + 250,
-            y + 15,
-            game.getAssetManager().getFont("retro_small"),
-            GameRenderer.RETRO_GREEN
-        ); */
     }
 }

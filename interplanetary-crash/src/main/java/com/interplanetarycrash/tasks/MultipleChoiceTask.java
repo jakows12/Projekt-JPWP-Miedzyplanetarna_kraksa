@@ -1,6 +1,7 @@
 package com.interplanetarycrash.tasks;
 
 import com.interplanetarycrash.GameApplication;
+import com.interplanetarycrash.assets.AssetManager;
 import com.interplanetarycrash.input.InputHandler;
 import com.interplanetarycrash.rendering.GameRenderer;
 import javafx.scene.input.KeyCode;
@@ -28,6 +29,7 @@ public class MultipleChoiceTask extends Task {
     
     private Font questionFont;
     private Font answerFont;
+    private Font letterFont;
     
     public MultipleChoiceTask(String question, String[] answers, char correctAnswer, int difficulty) {
         super(TaskType.MULTIPLE_CHOICE, question, difficulty);
@@ -43,6 +45,11 @@ public class MultipleChoiceTask extends Task {
         if (correctAnswerIndex < 0 || correctAnswerIndex > 3) {
             throw new IllegalArgumentException("Correct answer must be A, B, C, or D");
         }
+
+        AssetManager asset = AssetManager.getInstance();
+        this.questionFont = asset.getFont("retro");
+        this.answerFont = asset.getFont("retro");
+        this.letterFont = asset.getFont("retro_large");
     }
     
     @Override
@@ -75,8 +82,6 @@ public class MultipleChoiceTask extends Task {
     
     @Override
     public void render(GameRenderer renderer) {
-        questionFont = Font.font("Monospaced", 24);
-        answerFont = Font.font("Monospaced", 20);
         
         renderer.fillRect(0, 0, GameApplication.LOGICAL_WIDTH,
                          GameApplication.LOGICAL_HEIGHT,
@@ -86,7 +91,7 @@ public class MultipleChoiceTask extends Task {
             "REPAIR MODULE - ANSWER QUESTION",
             GameApplication.LOGICAL_WIDTH / 2.0,
             100,
-            Font.font("Monospaced", 28),
+            letterFont,
             GameRenderer.RETRO_GREEN
         );
         
@@ -112,7 +117,7 @@ public class MultipleChoiceTask extends Task {
                 "↑↓ or W/S: Navigate  |  ENTER: Confirm  |  A/B/C/D: Quick select",
                 GameApplication.LOGICAL_WIDTH / 2.0,
                 GameApplication.LOGICAL_HEIGHT - 50,
-                Font.font("Monospaced", 16),
+                answerFont,
                 GameRenderer.RETRO_GREEN_DARKER
             );
         }
@@ -144,7 +149,7 @@ public class MultipleChoiceTask extends Task {
             String.valueOf(letter),
             boxX + 45,
             y + 35,
-            Font.font("Monospaced", 32),
+            letterFont,
             selected ? Color.BLACK : GameRenderer.RETRO_GREEN
         );
         
@@ -161,7 +166,7 @@ public class MultipleChoiceTask extends Task {
                 "→",
                 boxX - 40,
                 y + 35,
-                Font.font("Monospaced", 36),
+                letterFont,
                 GameRenderer.RETRO_GREEN
             );
         }
@@ -180,14 +185,14 @@ public class MultipleChoiceTask extends Task {
                 "✓ CORRECT! Module repaired!",
                 GameApplication.LOGICAL_WIDTH / 2.0,
                 y + 30,
-                Font.font("Monospaced", 32),
-                Color.GREEN
+                letterFont,
+                GameRenderer.RETRO_GREEN
             );
             renderer.drawCenteredText(
                 "Press ENTER to continue",
                 GameApplication.LOGICAL_WIDTH / 2.0,
                 y + 70,
-                Font.font("Monospaced", 18),
+                answerFont,
                 GameRenderer.RETRO_GREEN
             );
         } else {
@@ -197,14 +202,14 @@ public class MultipleChoiceTask extends Task {
                 "✗ INCORRECT!",
                 GameApplication.LOGICAL_WIDTH / 2.0,
                 y + 30,
-                Font.font("Monospaced", 32),
+                letterFont,
                 Color.RED
             );
             renderer.drawCenteredText(
                 "Press ENTER to try again",
                 GameApplication.LOGICAL_WIDTH / 2.0,
                 y + 70,
-                Font.font("Monospaced", 18),
+                answerFont,
                 Color.RED
             );
         }

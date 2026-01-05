@@ -21,9 +21,9 @@ public class MainMenuState extends State {
     private Font titleFont;
     private Font subtitleFont;
     
-    private static final double BUTTON_WIDTH = 300;
-    private static final double BUTTON_HEIGHT = 80;
-    private static final double BUTTON_SPACING = 20;
+    private static final double BUTTON_WIDTH = 200;
+    private static final double BUTTON_HEIGHT = 40;
+    private static final double BUTTON_SPACING = 10;
     
     public MainMenuState(Game game) {
         super(game);
@@ -41,7 +41,7 @@ public class MainMenuState extends State {
         buttons = new ArrayList<>();
         
         double centerX = GameApplication.LOGICAL_WIDTH / 2.0;
-        double startY = 450;
+        double startY = GameApplication.LOGICAL_HEIGHT / 2.0;
         
         // Start button - begins from level 1
         Button startButton = new Button(
@@ -54,7 +54,7 @@ public class MainMenuState extends State {
         );
         startButton.setOnClick(() -> {
             System.out.println("Starting game from level 1");
-        //  game.getStateManager().changeState(...); - change to level 1
+            game.getStateManager().changeState(new LevelPlayingState(game, 1));
         });
         buttons.add(startButton);
         
@@ -130,8 +130,6 @@ public class MainMenuState extends State {
     
     @Override
     public void update(double deltaTime) {
-        // DEBUG: Remove after testing
-        // System.out.println("MainMenuState.update() called");
         
         // Handle navigation
         if (game.getInputHandler().isNavigatingDown()) {
@@ -213,22 +211,13 @@ public class MainMenuState extends State {
         
         // Draw version info
         renderer.drawText(
-            "v0.1.0 - Prototype",
+            "v0.1.1 - Still a Prototype",
             20,
             GameApplication.LOGICAL_HEIGHT - 30,
             game.getAssetManager().getFont("retro_small"),
             GameRenderer.RETRO_GREEN_DARKER
         );
         
-        /* DEBUG: Draw selected button index on screen
-        renderer.drawText(
-            "Selected: " + selectedButtonIndex,
-            20,
-            50,
-            game.getAssetManager().getFont("retro"),
-            GameRenderer.RETRO_GREEN
-        );
-        */
     }
     
     /**
@@ -236,16 +225,5 @@ public class MainMenuState extends State {
      */
     private void drawSpaceshipArt(GameRenderer renderer) {
         // TODO: Draw actual spaceship sprite or ASCII art
-        // For now, draw a simple placeholder
-        double centerX = GameApplication.LOGICAL_WIDTH / 2.0;
-        double centerY = 340;
-        
-        // Simple triangle spaceship
-        renderer.drawLine(centerX, centerY - 30, centerX - 40, centerY + 30, 
-                         GameRenderer.RETRO_GREEN, 2);
-        renderer.drawLine(centerX, centerY - 30, centerX + 40, centerY + 30, 
-                         GameRenderer.RETRO_GREEN, 2);
-        renderer.drawLine(centerX - 40, centerY + 30, centerX + 40, centerY + 30, 
-                         GameRenderer.RETRO_GREEN, 2);
     }
 }

@@ -49,7 +49,7 @@ public class AssetManager {
      */
     private void loadFonts() {
         // Try to load custom font from file (JavaFX)
-        try (java.io.FileInputStream fis = new java.io.FileInputStream("C:\\Users\\jakow\\Desktop\\PG\\3_rok\\JPWP\\kod\\Projekt-JPWP-Miedzyplanetarna_kraksa\\interplanetary-crash\\src\\main\\assets\\fonts\\BoldPixels.ttf")) {
+        try (java.io.FileInputStream fis = new java.io.FileInputStream(System.getProperty("user.dir") + "\\interplanetary-crash\\src\\main\\assets\\fonts\\BoldPixels.ttf")) {
             javafx.scene.text.Font fxBase = javafx.scene.text.Font.loadFont(fis, 12);
             if (fxBase != null) {
                 System.out.println("Custom font loaded successfully: " + fxBase.getName());
@@ -135,5 +135,24 @@ public class AssetManager {
         }
         return font;
     }
+
+    public Image getSprite(String name) {
+        Image sprite = sprites.get(name);
+        if (sprite == null) {
+            System.err.println("Sprite not found: " + name);
+            return createPlaceholder(64, 64, Color.MAGENTA, "?");
+        }
+        return sprite;
+    }
+
+    public Image[] getAnimationFrames(String baseName, int frameCount) {
+        Image[] frames = new Image[frameCount];
+        for (int i = 0; i < frameCount; i++) {
+            frames[i] = getSprite(baseName + "_" + i);
+        }
+        return frames;
+    }
+
+
     
 }

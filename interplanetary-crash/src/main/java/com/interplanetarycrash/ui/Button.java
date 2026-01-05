@@ -56,7 +56,7 @@ public class Button {
         
         // Draw arrow indicator if selected
         if (selected && enabled) {
-            renderer.drawText(">", x - 40, y + height / 2 + 10, font, TEXT_COLOR);
+            renderer.drawText(">", x - 25, y + height / 2 + 10, font, TEXT_COLOR);
             renderer.drawText("<", x + width + 15, y + height / 2 + 10, font, TEXT_COLOR);
         }
     }

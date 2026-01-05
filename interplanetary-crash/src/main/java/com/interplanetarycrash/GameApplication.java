@@ -14,8 +14,8 @@ import javafx.stage.Stage;
 public class GameApplication extends Application {
     
     // Logical resolution (all game coordinates use this)
-    public static final int LOGICAL_WIDTH = 1920;
-    public static final int LOGICAL_HEIGHT = 1080;
+    public static final int LOGICAL_WIDTH = 1280;
+    public static final int LOGICAL_HEIGHT = 720;
     
     // Initial window size
     private static final int INITIAL_WIDTH = 1280;

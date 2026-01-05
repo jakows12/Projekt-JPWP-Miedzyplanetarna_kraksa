@@ -65,7 +65,7 @@ public class GameApplication extends Application {
         //System.out.println("Input handlers setup complete");
         
         // Configure stage
-        primaryStage.setTitle("Międzyplanetarna Kraksa - Intergalactic Crash");
+        primaryStage.setTitle("Międzyplanetarna Kraksa - Interplanetary Crash");
         primaryStage.setScene(scene);
         primaryStage.setMinWidth(800);
         primaryStage.setMinHeight(600);

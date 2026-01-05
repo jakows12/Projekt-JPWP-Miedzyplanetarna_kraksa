@@ -183,7 +183,7 @@ public class LevelPlayingState extends State {
             return;
         }
         // Change to TaskActiveState
-        game.getStateManager().changeState(new TaskActiveState(game, level, module, this));
+        game.getStateManager().changeState(new TaskActiveState(game, level, module, this, timer, lifeSupportBar));
     }
     
     /**

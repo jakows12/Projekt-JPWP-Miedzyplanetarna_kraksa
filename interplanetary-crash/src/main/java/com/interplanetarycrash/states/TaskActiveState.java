@@ -5,6 +5,7 @@ import com.interplanetarycrash.level.Level;
 import com.interplanetarycrash.level.Module;
 import com.interplanetarycrash.rendering.GameRenderer;
 import com.interplanetarycrash.tasks.Task;
+import com.interplanetarycrash.ui.*;
 
 /**
  * State when player is actively solving a task
@@ -15,18 +16,21 @@ public class TaskActiveState extends State {
     private Level level;
     private Module module;
     private Task task;
+    private Timer timer;
+    private LifeSupportBar lifeSupportBar;
     private LevelPlayingState levelPlayingState;
     
     private boolean waitingForConfirm; // After completing, wait for ENTER
     
-    public TaskActiveState(Game game, Level level, Module module, 
-                          LevelPlayingState levelPlayingState) {
+    public TaskActiveState(Game game, Level level, Module module, LevelPlayingState levelPlayingState, Timer timer, LifeSupportBar lifeSupportBar) {
         super(game);
         this.level = level;
         this.module = module;
         this.task = module.getTask();
         this.levelPlayingState = levelPlayingState;
         this.waitingForConfirm = false;
+        this.timer = timer;
+        this.lifeSupportBar = lifeSupportBar;
     }
     
     @Override
@@ -121,7 +125,10 @@ public class TaskActiveState extends State {
         // Border
         renderer.drawRect(x, y, barWidth, barHeight, GameRenderer.RETRO_GREEN);
         
-        // Label
+        lifeSupportBar.render(renderer, level.getLifeSupportPercentage());
+        timer.render(renderer, level.getElapsedTime());
+
+        /* 
         renderer.drawText(
             String.format("LIFE: %.0f%%", level.getLifeSupportPercentage()),
             x,
@@ -137,6 +144,6 @@ public class TaskActiveState extends State {
             y + 15,
             game.getAssetManager().getFont("retro_small"),
             GameRenderer.RETRO_GREEN
-        );
+        ); */
     }
 }

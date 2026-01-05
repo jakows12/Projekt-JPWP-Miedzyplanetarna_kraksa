@@ -73,19 +73,19 @@ public class InputHandler {
     
     // WASD Movement
     public boolean isMovingUp() {
-        return isKeyPressed(KeyCode.W);
+        return isKeyPressed(KeyCode.UP) || isKeyPressed(KeyCode.W);
     }
     
     public boolean isMovingDown() {
-        return isKeyPressed(KeyCode.S);
+        return isKeyPressed(KeyCode.DOWN) || isKeyPressed(KeyCode.S);
     }
     
     public boolean isMovingLeft() {
-        return isKeyPressed(KeyCode.A);
+        return isKeyPressed(KeyCode.LEFT) || isKeyPressed(KeyCode.A);
     }
     
     public boolean isMovingRight() {
-        return isKeyPressed(KeyCode.D);
+        return isKeyPressed(KeyCode.RIGHT) || isKeyPressed(KeyCode.D);
     }
     
     // Interaction

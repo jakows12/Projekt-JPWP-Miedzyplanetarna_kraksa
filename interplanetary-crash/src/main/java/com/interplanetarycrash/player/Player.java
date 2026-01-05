@@ -72,11 +72,11 @@ public class Player {
             switch (moveDirection) {
                 case UP:
                     y -= speed * deltaTime;
-                    animatedSprite.setAnimation("walk_up");
+                    animatedSprite.setAnimation("walk_right");
                     break;
                 case DOWN:
                     y += speed * deltaTime;
-                    animatedSprite.setAnimation("walk_down");
+                    animatedSprite.setAnimation("walk_left");
                     break;
                 case LEFT:
                     x -= speed * deltaTime;

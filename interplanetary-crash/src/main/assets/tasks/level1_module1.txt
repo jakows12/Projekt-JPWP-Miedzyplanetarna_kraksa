@@ -1,0 +1,8 @@
+ABCD
+Jakie jest standardowe napięcie zasilania Arduino Uno?
+3.3V
+5V
+12V
+9V
+B
+1

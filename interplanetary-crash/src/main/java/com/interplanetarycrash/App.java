@@ -4,7 +4,7 @@ package com.interplanetarycrash;
 import javafx.application.Application;
 
 /**
- * Main entry point for Intergalactic Crash game
+ * Main entry point for Interplanetary Crash game
  * Gra "Międzyplanetarna Kraksa" - edukacyjna gra przygodowa
  */
 public class App {

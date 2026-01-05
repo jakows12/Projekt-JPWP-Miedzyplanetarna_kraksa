@@ -1,0 +1,142 @@
+package com.interplanetarycrash.states;
+
+import com.interplanetarycrash.core.Game;
+import com.interplanetarycrash.level.Level;
+import com.interplanetarycrash.level.Module;
+import com.interplanetarycrash.rendering.GameRenderer;
+import com.interplanetarycrash.tasks.Task;
+
+/**
+ * State when player is actively solving a task
+ * Time continues to pass and life support drains!
+ */
+public class TaskActiveState extends State {
+    
+    private Level level;
+    private Module module;
+    private Task task;
+    private LevelPlayingState levelPlayingState;
+    
+    private boolean waitingForConfirm; // After completing, wait for ENTER
+    
+    public TaskActiveState(Game game, Level level, Module module, 
+                          LevelPlayingState levelPlayingState) {
+        super(game);
+        this.level = level;
+        this.module = module;
+        this.task = module.getTask();
+        this.levelPlayingState = levelPlayingState;
+        this.waitingForConfirm = false;
+    }
+    
+    @Override
+    public void enter() {
+        System.out.println("Starting task: " + task.getType());
+        
+        if (task == null) {
+            System.err.println("ERROR: Task is null!");
+            // Return to playing state
+            game.getStateManager().changeState(levelPlayingState);
+        }
+    }
+    
+    @Override
+    public void exit() {
+        System.out.println("Exiting task");
+    }
+    
+    @Override
+    public void update(double deltaTime) {
+        // IMPORTANT: Level continues to update (time passes, life drains!)
+        level.update(deltaTime);
+        
+        // Check if game over
+        if (level.isGameOver()) {
+            System.out.println("Game Over during task!");
+            // TODO: Go to game over screen
+            game.getStateManager().changeState(levelPlayingState);
+            return;
+        }
+        
+        // If task completed, wait for confirmation
+        if (task.isCompleted()) {
+            if (!waitingForConfirm) {
+                waitingForConfirm = true;
+                
+                // If correct, repair the module
+                if (task.isCorrect()) {
+                    module.repair();
+                    System.out.println("Module repaired!");
+                    if(level.lifeSupport < 90.0) {
+                        level.lifeSupport += 10.0; // Reward life support
+                    } else level.lifeSupport = 100;
+                } else {
+                    System.out.println("Incorrect answer, module not repaired");
+                    level.lifeSupport -= 10.0;
+                }
+            }
+            
+            // Wait for ENTER to continue
+            if (game.getInputHandler().isConfirming()) {
+                if (task.isCorrect()) {
+                    game.getStateManager().changeState(levelPlayingState);
+                } else {
+                    task.reset();
+                    waitingForConfirm = false;
+                }
+            }
+            return;
+        }
+        
+        // Update task
+        task.update(deltaTime, game.getInputHandler());
+    }
+    
+    @Override
+    public void render(GameRenderer renderer) {
+        // Render the task UI
+        task.render(renderer);
+        
+        // Overlay life support and time (always visible)
+        renderOverlayUI(renderer);
+    }
+    
+    /**
+     * Render life support bar and timer overlay
+     */
+    private void renderOverlayUI(GameRenderer renderer) {
+        // Small life support indicator in corner
+        double barWidth = 200;
+        double barHeight = 20;
+        double x = 20;
+        double y = 20;
+        
+        // Background
+        renderer.fillRect(x, y, barWidth, barHeight, GameRenderer.RETRO_BACKGROUND);
+        
+        // Fill
+        double fillWidth = barWidth * (level.getLifeSupport() / level.getMaxLifeSupport());
+        renderer.fillRect(x, y, fillWidth, barHeight, GameRenderer.RETRO_GREEN);
+        
+        // Border
+        renderer.drawRect(x, y, barWidth, barHeight, GameRenderer.RETRO_GREEN);
+        
+        // Label
+        renderer.drawText(
+            String.format("LIFE: %.0f%%", level.getLifeSupportPercentage()),
+            x,
+            y - 5,
+            game.getAssetManager().getFont("retro_small"),
+            GameRenderer.RETRO_GREEN
+        );
+        
+        // Timer
+        renderer.drawText(
+            String.format("TIME: %.1fs", level.getElapsedTime()),
+            x + 250,
+            y + 15,
+            game.getAssetManager().getFont("retro_small"),
+            GameRenderer.RETRO_GREEN
+        );
+    }
+}

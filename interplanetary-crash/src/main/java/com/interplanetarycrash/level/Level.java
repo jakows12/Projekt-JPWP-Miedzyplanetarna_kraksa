@@ -1,12 +1,11 @@
 package com.interplanetarycrash.level;
 
 import com.interplanetarycrash.assets.AssetManager;
-import com.interplanetarycrash.core.Game;
 import com.interplanetarycrash.player.Player;
 import com.interplanetarycrash.tasks.Task;
+import com.interplanetarycrash.tasks.TaskLoader;
 import com.interplanetarycrash.GameApplication;
 import javafx.scene.image.Image;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +25,7 @@ public class Level {
     private Image background;
     
     // Life support system
-    private float lifeSupport; // 0-100
+    public float lifeSupport; // 0-100
     private float maxLifeSupport = 100f;
     private float lifeDrainRate; // How fast life support drains per second
     
@@ -90,8 +89,6 @@ public class Level {
         modules = new ArrayList<>();
         ship = new Ship(GameApplication.LOGICAL_WIDTH/2.0, GameApplication.LOGICAL_WIDTH/2.0-300, modules);
         
-        // Create modules around the ship
-        // TODO: Load actual tasks from files
         createModulesAroundShip();
     }
     
@@ -114,7 +111,13 @@ public class Level {
             ModuleType type = types[i % types.length];
             
             // TODO: Load actual task from file
-            Task task = null; // Placeholder
+            String taskFilename = TaskLoader.getTaskFilename(levelNumber, i);
+            Task task = TaskLoader.loadTask(taskFilename);
+            
+            if (task == null) {
+                System.err.println("Failed to load task for level " + levelNumber + 
+                                 " module " + i + ", using fallback");
+            }
             
             Module module = new Module(type, moduleX, moduleY, task);
             modules.add(module);

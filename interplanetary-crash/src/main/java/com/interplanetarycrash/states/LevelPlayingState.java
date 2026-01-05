@@ -177,11 +177,13 @@ public class LevelPlayingState extends State {
     private void startModuleRepair(Module module) {
         System.out.println("Starting repair of " + module.getType().getDisplayName());
         
-        // TODO: For now, just auto-repair (until we implement tasks)
-        module.repair();
-        
-        // TODO: Change to TaskActiveState when tasks are implemented
-        // game.getStateManager().changeState(new TaskActiveState(game, level, module));
+        // Check if module has a task
+        if (module.getTask() == null) {
+            System.err.println("ERROR: Module has no task!");
+            return;
+        }
+        // Change to TaskActiveState
+        game.getStateManager().changeState(new TaskActiveState(game, level, module, this));
     }
     
     /**
@@ -250,7 +252,7 @@ public class LevelPlayingState extends State {
      * Render controls hint
      */
     private void renderControlsHint(GameRenderer renderer) {
-        String hint = "WASD: Move  |  E: Interact  |  SPACE: Pause";
+        String hint = "↑↓ or WASD: Move  |  E: Interact  |  SPACE: Pause";
         renderer.drawCenteredText(
             hint,
             GameApplication.LOGICAL_WIDTH / 2,

@@ -184,7 +184,7 @@ public class MainMenuState extends State {
         
         // Draw subtitle
         renderer.drawCenteredText(
-            "INTERGALACTIC CRASH",
+            "INTERPLANETARY CRASH",
             GameApplication.LOGICAL_WIDTH / 2.0,
             260,
             subtitleFont,

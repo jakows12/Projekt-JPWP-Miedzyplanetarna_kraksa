@@ -1,5 +1,7 @@
 package com.interplanetarycrash.assets;
 
+import com.interplanetarycrash.animation.Animation;
+
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
@@ -7,9 +9,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.interplanetarycrash.animation.AnimatedSprite;
 
 /**
  * Singleton class for managing game assets (sprites, fonts, sounds)
@@ -18,12 +23,19 @@ import java.util.Map;
 public class AssetManager {
     
     private static AssetManager instance;
+
+    private static final int PLAYER_SCALE = 2;      
+    private static final int MODULE_SCALE = 2;      
+    private static final int SHIP_SCALE = 4;        
+    private static final int BACKGROUND_SCALE = 1;  
     
     private final Map<String, Image> sprites = new HashMap<>();
     private final Map<String, Font> fonts = new HashMap<>();
     
     private AssetManager() {}
-    
+
+    private static final String assetsPath = System.getProperty("user.dir") + "\\interplanetary-crash\\src\\main\\assets";
+
     public static AssetManager getInstance() {
         if (instance == null) {
             instance = new AssetManager();
@@ -39,8 +51,9 @@ public class AssetManager {
         
         loadFonts();
         loadBackgrounds();
-        loadUISprites();
-        
+        loadAllSprites();
+        loadAllAnimations();
+
         System.out.println("Assets loaded successfully!");
     }
     
@@ -49,7 +62,7 @@ public class AssetManager {
      */
     private void loadFonts() {
         // Try to load custom font from file (JavaFX)
-        try (java.io.FileInputStream fis = new java.io.FileInputStream(System.getProperty("user.dir") + "\\interplanetary-crash\\src\\main\\assets\\fonts\\BoldPixels.ttf")) {
+        try (java.io.FileInputStream fis = new java.io.FileInputStream(assetsPath + "\\fonts\\BoldPixels.ttf")) {
             javafx.scene.text.Font fxBase = javafx.scene.text.Font.loadFont(fis, 12);
             if (fxBase != null) {
                 System.out.println("Custom font loaded successfully: " + fxBase.getName());
@@ -76,7 +89,74 @@ public class AssetManager {
         fonts.put("retro_large", Font.font("Monospaced", 48));
         fonts.put("retro_small", Font.font("Monospaced", 16));
     }
+
+    private void loadSingleAnimation(String name, int frameCount, int scale) {
+        for (int i = 1; i <= frameCount; i++) {
+            String path = name + "\\Sprite-" + name + i + ".png";
+            sprites.put(name + i, loadImage(path, scale));
+        }
+    }
     
+    private void loadAllAnimations() {
+        loadSingleAnimation("Astronaut-Death-Left", 13, PLAYER_SCALE);
+        loadSingleAnimation("Astronaut-Death-Right", 13, PLAYER_SCALE);
+        loadSingleAnimation("Astronaut-Walking-Left", 2, PLAYER_SCALE);
+        loadSingleAnimation("Astronaut-Walking-Right", 2, PLAYER_SCALE);
+        loadSingleAnimation("Astronaut-Idle-Right", 2, PLAYER_SCALE);
+        loadSingleAnimation("Astronaut-Idle-Left", 2, PLAYER_SCALE);
+        loadSingleAnimation("Comms-Destroyed", 4, MODULE_SCALE);
+        loadSingleAnimation("Comms-Repaired", 8, MODULE_SCALE);
+        loadSingleAnimation("Servers-Destroyed", 5, MODULE_SCALE);
+        loadSingleAnimation("Servers-Repaired", 7, MODULE_SCALE);
+        loadSingleAnimation("Starship-Burning", 6, SHIP_SCALE);
+        loadSingleAnimation("Starship-Destroyed", 6, SHIP_SCALE);
+    }
+
+    private void loadAllSprites() {
+        //Load individual sprites
+        String[] spriteNames = {
+            "Sprite-Wing-Damaged1",
+            "Sprite-Starship-Repaired1"
+        };
+
+        for (String name : spriteNames) {
+            String path = name + ".png";
+            sprites.put(name, loadImage(path, SHIP_SCALE));
+        }
+    }
+    /**
+     * Load single image file
+     */
+    private Image loadImage(String relativePath, int scale) {
+        try {
+            String fullPath = assetsPath + "\\sprites\\" + relativePath;
+            File file = new File(fullPath);
+            if (file.exists()) {
+                FileInputStream fis = new FileInputStream(file);
+                // Load original size first
+                Image original = new Image(fis, 0, 0, true, false);
+                fis.close();
+                
+                // Calculate scaled dimensions
+                int scaledWidth = (int)(original.getWidth() * scale);
+                int scaledHeight = (int)(original.getHeight() * scale);
+                
+                // Reload with specific size and NO SMOOTHING
+                fis = new FileInputStream(file);
+                Image scaled = new Image(fis, scaledWidth, scaledHeight, true, false);
+                fis.close();
+                
+                System.out.println("  Loaded (scaled " + scale + "x): " + relativePath);
+                return scaled;
+            } else {
+                System.err.println("  File not found: " + fullPath);
+            }
+        } catch (Exception e) {
+            System.err.println("  Failed to load: " + relativePath + " - " + e.getMessage());
+        }
+        return null;
+    }
+
     /**
      * Load background sprites
      */
@@ -86,19 +166,10 @@ public class AssetManager {
         // Create placeholder backgrounds for each level
         for (int i = 1; i <= 10; i++) {
             sprites.put("background_level" + i, 
-                       createPlaceholder(1920, 1080, Color.rgb(0, 20 + i * 5, 0), ""));
+                       createPlaceholder(1280, 720, Color.rgb(0, 20, 0), ""));
         }
     }
     
-    /**
-     * Load UI sprites
-     */
-    private void loadUISprites() {
-        // TODO: Load UI elements
-        sprites.put("button", createPlaceholder(200, 60, Color.rgb(0, 100, 0), ""));
-        sprites.put("button_hover", createPlaceholder(200, 60, Color.rgb(0, 150, 0), ""));
-        sprites.put("button_locked", createPlaceholder(200, 60, Color.rgb(50, 50, 50), ""));
-    }
     
     /**
      * Create a placeholder image with color and optional text
@@ -147,8 +218,8 @@ public class AssetManager {
 
     public Image[] getAnimationFrames(String baseName, int frameCount) {
         Image[] frames = new Image[frameCount];
-        for (int i = 0; i < frameCount; i++) {
-            frames[i] = getSprite(baseName + "_" + i);
+        for (int i = 1; i < frameCount+1; i++) {
+            frames[i-1] = getSprite(baseName + i);
         }
         return frames;
     }

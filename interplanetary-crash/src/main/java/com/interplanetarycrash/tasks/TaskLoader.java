@@ -1,13 +1,17 @@
 package com.interplanetarycrash.tasks;
 
 import com.interplanetarycrash.core.Game;
+import com.interplanetarycrash.tasks.LogicGatesTask.GateType;
+import com.interplanetarycrash.tasks.FrequencySpectrumTask.WaveformType;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Loads tasks from text files in assets/tasks/
@@ -53,10 +57,7 @@ public class TaskLoader {
                     
                 case LOGIC_GATES:
                     return loadLogicGatesTask(lines);
-                    
-                case CIRCUIT:
-                    return loadCircuitTask(lines);
-                    
+                                       
                 default:
                     System.err.println("Unknown task type: " + type);
                     return createFallbackTask();
@@ -101,53 +102,146 @@ public class TaskLoader {
     
     /**
      * Load Frequency Spectrum task
-     * Format:
+     * 
+     * Format (OLD - backward compatible):
      * FREQ
      * Adjust the function parameters to match the frequency spectrum
-     * amplitude,frequency,phase (target values)
-     * amplitude_min,amplitude_max
-     * frequency_min,frequency_max
-     * phase_min,phase_max
-     * tolerance
+     * 5.0,50.0,0.0 (target: amplitude,frequency,phase)
+     * 0.0,10.0 (amplitude range: min,max)
+     * 10.0,100.0 (frequency range: min,max)
+     * 0.0,6.28 (phase range: min,max)
+     * 0.5 (tolerance)
+     * 2 (difficulty)
+     * 
+     * Format (NEW - with waveform):
+     * FREQ
+     * Match the signal waveform and parameters
+     * 5.0,50.0,0.0,SQUARE (target: amplitude,frequency,phase,waveform)
+     * 0.0,10.0 (amplitude range: min,max)
+     * 10.0,100.0 (frequency range: min,max)
+     * 0.0,6.28 (phase range: min,max)
+     * 0.5 (tolerance)
      * 2 (difficulty)
      */
     private static Task loadFrequencySpectrumTask(List<String> lines) {
-        // TODO: Implement when FrequencySpectrumTask is created
-        System.out.println("FrequencySpectrumTask loading - not yet implemented");
-        return createFallbackTask();
+        if (lines.size() < 8) {
+            throw new IllegalArgumentException("FrequencySpectrum task needs at least 8 lines");
+        }
+        
+        String instruction = lines.get(1).trim();
+        
+        // Parse target values (check if waveform is specified)
+        String[] targets = lines.get(2).split(",");
+        double targetAmplitude = Double.parseDouble(targets[0].trim());
+        double targetFrequency = Double.parseDouble(targets[1].trim());
+        double targetPhase = Double.parseDouble(targets[2].trim());
+        
+        // Check if waveform type is specified (NEW FORMAT)
+        WaveformType targetWaveform = WaveformType.SINE; // Default
+        if (targets.length >= 4) {
+            try {
+                targetWaveform = WaveformType.valueOf(targets[3].trim().toUpperCase());
+                System.out.println("  Loaded waveform type: " + targetWaveform);
+            } catch (IllegalArgumentException e) {
+                System.err.println("  Unknown waveform type: " + targets[3] + ", using SINE");
+            }
+        }
+        
+        // Parse ranges
+        String[] ampRange = lines.get(3).split(",");
+        double ampMin = Double.parseDouble(ampRange[0].trim());
+        double ampMax = Double.parseDouble(ampRange[1].trim());
+        
+        String[] freqRange = lines.get(4).split(",");
+        double freqMin = Double.parseDouble(freqRange[0].trim());
+        double freqMax = Double.parseDouble(freqRange[1].trim());
+        
+        String[] phaseRange = lines.get(5).split(",");
+        double phaseMin = Double.parseDouble(phaseRange[0].trim());
+        double phaseMax = Double.parseDouble(phaseRange[1].trim());
+        
+        double tolerance = Double.parseDouble(lines.get(6).trim());
+        int difficulty = Integer.parseInt(lines.get(7).trim());
+        
+        // Create task with waveform parameter (uses new constructor)
+        return new FrequencySpectrumTask(
+            instruction,
+            targetAmplitude, targetFrequency, targetPhase, targetWaveform,
+            ampMin, ampMax,
+            freqMin, freqMax,
+            phaseMin, phaseMax,
+            tolerance,
+            difficulty
+        );
     }
     
-    /**
+ /**
      * Load Logic Gates task
      * Format:
      * LOGIC
-     * Connect logic gates to produce the correct output
-     * input1,input2,input3 (input values)
-     * expected_output
-     * available_gates (AND,OR,NOT,NAND,NOR,XOR)
-     * 3 (difficulty)
+     * Build circuit for: F(A,B) = A NAND B
+     * 1,1,0  (truth table row: A, B, F)
+     * 1,0,1
+     * 0,1,1
+     * 0,0,1
+     * NAND,NOT  (available gates)
+     * 2  (difficulty)
      */
     private static Task loadLogicGatesTask(List<String> lines) {
-        // TODO: Implement when LogicGatesTask is created
-        System.out.println("LogicGatesTask loading - not yet implemented");
-        return createFallbackTask();
-    }
-    
-    /**
-     * Load Circuit task
-     * Format:
-     * CIRCUIT
-     * Calculate the total resistance of the circuit
-     * resistor_values (R1,R2,R3,...)
-     * circuit_configuration (series/parallel/mixed)
-     * correct_answer
-     * tolerance
-     * 2 (difficulty)
-     */
-    private static Task loadCircuitTask(List<String> lines) {
-        // TODO: Implement when CircuitTask is created
-        System.out.println("CircuitTask loading - not yet implemented");
-        return createFallbackTask();
+        if (lines.size() < 4) {
+            throw new IllegalArgumentException("LogicGates task needs at least 4 lines");
+        }
+        
+        String instruction = lines.get(1).trim();
+        
+        // Parse truth table (all lines until we hit gate list)
+        List<boolean[]> truthTable = new ArrayList<>();
+        int lineIndex = 2;
+        
+        while (lineIndex < lines.size()) {
+            String line = lines.get(lineIndex).trim();
+            
+            // Check if this is the gate list (contains letters)
+            if (line.matches(".*[A-Z]+.*") && line.contains(",") && 
+                line.toUpperCase().contains("AND") || line.toUpperCase().contains("OR") || 
+                line.toUpperCase().contains("NOT") || line.toUpperCase().contains("XOR")) {
+                break; // This is the gate list
+            }
+            
+            // Parse as truth table row
+            String[] parts = line.split(",");
+            boolean[] row = new boolean[parts.length];
+            for (int i = 0; i < parts.length; i++) {
+                row[i] = parts[i].trim().equals("1");
+            }
+            truthTable.add(row);
+            lineIndex++;
+        }
+        
+        // Parse available gates
+        if (lineIndex >= lines.size()) {
+            throw new IllegalArgumentException("Missing available gates line");
+        }
+        
+        String[] gateStrs = lines.get(lineIndex).split(",");
+        Set<GateType> availableGates = new HashSet<>();
+        for (String gateStr : gateStrs) {
+            try {
+                availableGates.add(GateType.valueOf(gateStr.trim().toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                System.err.println("Unknown gate type: " + gateStr);
+            }
+        }
+        
+        lineIndex++;
+        
+        // Parse difficulty
+        int difficulty = 2;
+        if (lineIndex < lines.size()) {
+            difficulty = Integer.parseInt(lines.get(lineIndex).trim());
+        }
+        
+        return new LogicGatesTask(instruction, truthTable, availableGates, difficulty);
     }
     
     /**

@@ -1,0 +1,6 @@
+LOGIC
+Użyj bramek logicznych aby uzyskać poprawne wyjście
+1,0
+1
+AND,OR,NOT
+2

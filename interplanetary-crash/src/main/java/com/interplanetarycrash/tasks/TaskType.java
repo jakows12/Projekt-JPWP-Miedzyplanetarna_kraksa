@@ -6,8 +6,7 @@ package com.interplanetarycrash.tasks;
 public enum TaskType {
     MULTIPLE_CHOICE("ABCD", "Multiple choice question"),
     FREQUENCY_SPECTRUM("FREQ", "Match frequency spectrum"),
-    LOGIC_GATES("LOGIC", "Logic gates puzzle"),
-    CIRCUIT("CIRCUIT", "Electric circuit problem");
+    LOGIC_GATES("LOGIC", "Logic gates puzzle");
     
     private final String code;
     private final String displayName;

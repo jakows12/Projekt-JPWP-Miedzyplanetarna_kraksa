@@ -4,10 +4,10 @@ package com.interplanetarycrash.level;
  * Types of ship modules that can be repaired
  */
 public enum ModuleType {
-    ENGINE("Silnik"),
-    NAVIGATION("Nawigacja"),
-    LIFE_SUPPORT("Podtrzymywanie Życia"),
-    COMMUNICATION("Komunikacja");
+    SERVERS("servers"),
+    COMMUNICATION("comms"),
+    ENGINE("engine"),
+    WING("wing");
     
     private final String displayName;
     
@@ -15,7 +15,7 @@ public enum ModuleType {
         this.displayName = displayName;
     }
     
-    public String getDisplayName() {
+    public String getProperName() {
         return displayName;
     }
 }

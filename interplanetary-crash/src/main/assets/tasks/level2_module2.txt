@@ -1,0 +1,8 @@
+FREQ
+Dopasuj amplitudę, częstotliwość i fazę do wskazanego sygnału
+7.5,75.0,1.57,SINC
+0.0,10.0
+10.0,100.0
+0.0,6.28
+0.5
+3

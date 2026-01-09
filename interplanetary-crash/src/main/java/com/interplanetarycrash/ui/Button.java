@@ -14,6 +14,7 @@ public class Button {
     private double x, y, width, height;
     private boolean selected; // Selected with keyboard navigation
     private boolean enabled;
+    private boolean arrowsVisible = true;
     private Runnable onClick;
     private final Font font;
 
@@ -46,7 +47,7 @@ public class Button {
         renderer.fillRect(x, y, width, height, bgColor);
         
         // Draw border (thicker if selected)
-        if (selected && enabled) {
+        if (selected) {
             renderer.drawRect(x - 5, y - 5, width + 10, height + 10, TEXT_COLOR);
         }
         renderer.drawRect(x, y, width, height, TEXT_COLOR);
@@ -55,7 +56,7 @@ public class Button {
         renderer.drawCenteredText(text, x + width / 2, y + height / 2 + 8, font, textColor);
         
         // Draw arrow indicator if selected
-        if (selected && enabled) {
+        if (selected && enabled && arrowsVisible) {
             renderer.drawText(">", x - 25, y + height / 2 + 10, font, TEXT_COLOR);
             renderer.drawText("<", x + width + 15, y + height / 2 + 10, font, TEXT_COLOR);
         }
@@ -76,6 +77,7 @@ public class Button {
     public boolean isEnabled() { return enabled; }
     public void setEnabled(boolean enabled) { this.enabled = enabled; }
     public void setOnClick(Runnable onClick) { this.onClick = onClick; }
+    public void setArrowsVisible(boolean visible) { this.arrowsVisible = visible; }
     public void setText(String text) { this.text = text; }
     public String getText() { return text; }
     public double getX() { return x; }

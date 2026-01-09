@@ -121,24 +121,10 @@ public class GameRenderer {
                     toScreenWidth(width), toScreenHeight(height));
     }
     
-    /**
-     * Draw circle
-     */
-    public void drawCircle(double centerX, double centerY, double radius, Color color) {
-        gc.setStroke(color);
-        gc.setLineWidth(2 * Math.min(scaleX, scaleY));
-        double diameter = radius * 2;
-        gc.strokeOval(toScreenX(centerX - radius), toScreenY(centerY - radius),
-                      toScreenWidth(diameter), toScreenHeight(diameter));
-    }
-    
-    /**
-     * Fill circle
-     */
     public void fillCircle(double centerX, double centerY, double radius, Color color) {
         gc.setFill(color);
         double diameter = radius * 2;
-        gc.fillOval(toScreenX(centerX - radius), toScreenY(centerY - radius),
+        gc.fillOval(toScreenX(centerX - radius), toScreenY(centerY - radius), 
                     toScreenWidth(diameter), toScreenHeight(diameter));
     }
     

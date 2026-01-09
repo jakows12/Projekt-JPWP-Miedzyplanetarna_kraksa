@@ -42,27 +42,24 @@ public class Level {
         this.completed = false;
         this.lifeSupport = maxLifeSupport;
         
-        // Calculate difficulty parameters
-        calculateDifficulty();
-        
         // Load background
         loadBackground();
         
         // Initialize level layout
         initializeLevel();
+
     }
     
     /**
      * Calculate difficulty parameters based on level number
      */
-    private void calculateDifficulty() {
+    private void calculateDifficulty(ModuleType[] types) {
         // More modules as levels progress
         if (levelNumber == 1) {
-            requiredModules = 2;
+            modules.get(types.length-1).repair(); // Last module is done in level 1
+            modules.get(types.length-2).repair();
         } else if (levelNumber <= 3) {
-            requiredModules = 3;
-        } else {
-            requiredModules = 4;
+            modules.get(types.length-1).repair();
         }
         
         // Life drain increases with level
@@ -83,11 +80,11 @@ public class Level {
      */
     private void initializeLevel() {
         // Create player at start position
-        player = new Player(GameApplication.LOGICAL_WIDTH/2.0, GameApplication.LOGICAL_WIDTH/2.0-100); // Bottom center of screen
+        player = new Player(GameApplication.LOGICAL_WIDTH/2.0+100, GameApplication.LOGICAL_WIDTH/2.0-100); // Bottom center of screen
         
         // Create ship at center-top
         modules = new ArrayList<>();
-        ship = new Ship(GameApplication.LOGICAL_WIDTH/2.0, GameApplication.LOGICAL_WIDTH/2.0-300, modules);
+        ship = new Ship(GameApplication.LOGICAL_WIDTH*0.6, GameApplication.LOGICAL_WIDTH*0.2, modules);
         
         createModulesAroundShip();
     }
@@ -98,17 +95,15 @@ public class Level {
     private void createModulesAroundShip() {
         double shipX = ship.getX();
         double shipY = ship.getY();
-        double radius = 256;
         
         ModuleType[] types = ModuleType.values();
+
+        double moduleXs[] = {GameApplication.LOGICAL_WIDTH*0.15, GameApplication.LOGICAL_WIDTH*0.9, shipX + 100, shipX + 370};
+        double moduleYs[] = {GameApplication.LOGICAL_HEIGHT*0.5, GameApplication.LOGICAL_HEIGHT*0.67, shipY + 200, shipY + 180};
         
-        for (int i = 0; i < requiredModules; i++) {
-            // Position modules in a circle around ship
-            double angle = (Math.PI * 2 / requiredModules) * i - Math.PI / 4.0;
-            double moduleX = shipX + Math.cos(angle) * radius;
-            double moduleY = shipY + Math.sin(angle) * radius;
+        for (int i = 0; i < types.length; i++) {
             
-            ModuleType type = types[i % types.length];
+            ModuleType type = types[i];
             
             // TODO: Load actual task from file
             String taskFilename = TaskLoader.getTaskFilename(levelNumber, i);
@@ -119,9 +114,11 @@ public class Level {
                                  " module " + i + ", using fallback");
             }
             
-            Module module = new Module(type, moduleX, moduleY, task);
+            Module module = new Module(type, moduleXs[i], moduleYs[i], task);
             modules.add(module);
         }
+
+        calculateDifficulty(types);
     }
     
     /**
@@ -139,7 +136,7 @@ public class Level {
             lifeSupport = 0;
         }
         
-        // Update modules (fire animations)
+        ship.update(deltaTime);
         for (Module module : modules) {
             module.update(deltaTime);
         }
@@ -207,12 +204,26 @@ public class Level {
     public float getLifeSupportPercentage() { return (lifeSupport / maxLifeSupport) * 100; }
     public float getElapsedTime() { return elapsedTime; }
     public boolean isCompleted() { return completed; }
-    public int getRequiredModules() { return requiredModules; }
+    public int getRequiredModules() { 
+        if (levelNumber == 1) {
+            return ModuleType.values().length - 2;
+        } else if (levelNumber <= 3) {
+            return ModuleType.values().length - 1;
+        } else {
+            return ModuleType.values().length;
+        }
+    }
     public int getRepairedModulesCount() {
         int count = 0;
         for (Module m : modules) {
             if (m.isRepaired()) count++;
         }
-        return count;
+        if (levelNumber == 1) {
+            return count - 2;
+        } else if (levelNumber <= 3) {
+            return count - 1;
+        } else {
+            return count;
+        }
     }
 }

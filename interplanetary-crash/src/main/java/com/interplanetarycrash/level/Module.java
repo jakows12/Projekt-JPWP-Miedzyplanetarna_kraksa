@@ -1,8 +1,10 @@
 package com.interplanetarycrash.level;
 
+import com.interplanetarycrash.animation.AnimatedSprite;
 import com.interplanetarycrash.animation.Animation;
 import com.interplanetarycrash.assets.AssetManager;
 import com.interplanetarycrash.rendering.GameRenderer;
+import com.interplanetarycrash.level.ModuleType.*;
 import com.interplanetarycrash.tasks.Task;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
@@ -21,15 +23,12 @@ public class Module {
     
     private Image brokenSprite;
     private Image repairedSprite;
-    private Animation fireAnimation;
+    private AnimatedSprite animatedSprite;
     
     // Interaction and collision
-    private static final double MODULE_SIZE = 96;
-    private static final double INTERACTION_RADIUS = 80; // Distance to press E
+    private static final double MODULE_SIZE = 192;
+    private static final double INTERACTION_RADIUS = 210; // Distance to press E
     
-    // Fire animation offset (render above module)
-    private static final double FIRE_OFFSET_X = 16;
-    private static final double FIRE_OFFSET_Y = -20;
     
     public Module(ModuleType type, double x, double y, Task task) {
         this.type = type;
@@ -45,25 +44,43 @@ public class Module {
      * Load sprites and animations
      */
     private void loadAssets() {
+        animatedSprite = new AnimatedSprite();
         AssetManager assets = AssetManager.getInstance();
         
-        // Load module sprites based on type
-        String typeName = type.name().toLowerCase();
-        brokenSprite = assets.getSprite(typeName + "_broken");
-        repairedSprite = assets.getSprite(typeName + "_repaired");
-        
-        // Load fire animation (4 frames, 0.1s each)
-        Image[] fireFrames = assets.getAnimationFrames("fire", 4);
-        fireAnimation = new Animation(fireFrames, 0.1, true);
+        Animation commsDestroyed = new Animation(
+            assets.getAnimationFrames("Comms-Destroyed", 4), 
+            0.15, 
+            true);
+        animatedSprite.addAnimation("comms_destroyed", commsDestroyed);
+
+        Animation commsRepaired = new Animation(
+            assets.getAnimationFrames("Comms-Repaired", 8), 
+            0.15, 
+            true);
+        animatedSprite.addAnimation("comms_repaired", commsRepaired);
+
+        Animation serversDestroyed = new Animation(
+            assets.getAnimationFrames("Servers-Destroyed", 5), 
+            0.15, 
+            true);
+        animatedSprite.addAnimation("servers_destroyed", serversDestroyed);
+
+        Animation serversRepaired = new Animation(
+            assets.getAnimationFrames("Servers-Repaired", 7), 
+            0.15, 
+            true);
+        animatedSprite.addAnimation("servers_repaired", serversRepaired);
+
+        if (type != ModuleType.ENGINE && type != ModuleType.WING) {
+                animatedSprite.setAnimation(type.getProperName() + "_destroyed");
+        }
     }
     
     /**
      * Update module (mainly fire animation)
      */
     public void update(double deltaTime) {
-        if (!repaired) {
-            fireAnimation.update(deltaTime);
-        }
+        animatedSprite.update(deltaTime);
     }
     
     /**
@@ -71,23 +88,16 @@ public class Module {
      */
     public void render(GameRenderer renderer) {
         // Render appropriate sprite
-        Image sprite = repaired ? repairedSprite : brokenSprite;
-        double renderX = x - MODULE_SIZE / 2;
-        double renderY = y - MODULE_SIZE / 2;
-        renderer.drawImage(sprite, renderX, renderY, MODULE_SIZE, MODULE_SIZE);
-        
-        // Render fire animation if not repaired
-        if (!repaired) {
-            Image fireFrame = fireAnimation.getCurrentFrame();
-            if (fireFrame != null) {
-                renderer.drawImage(
-                    fireFrame,
-                    x - 32 + FIRE_OFFSET_X,
-                    y - 32 + FIRE_OFFSET_Y,
-                    64,
-                    64
-                );
+        if (type != ModuleType.ENGINE && type != ModuleType.WING) {
+            if (repaired) {
+                animatedSprite.setAnimation(type.getProperName() + "_repaired");
+            } else {
+                animatedSprite.setAnimation(type.getProperName() + "_destroyed");
             }
+            Image currentFrame = animatedSprite.getCurrentFrame();
+            double renderX = x - MODULE_SIZE / 2;
+            double renderY = y - MODULE_SIZE / 2;
+            renderer.drawImage(currentFrame, renderX, renderY, MODULE_SIZE, MODULE_SIZE);
         }
     }
     

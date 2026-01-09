@@ -118,4 +118,12 @@ public class InputHandler {
     public boolean isNavigatingRight() {
         return isKeyJustPressed(KeyCode.RIGHT) || isKeyJustPressed(KeyCode.D);
     }
+
+    public boolean isSelectingRight() {
+        return isKeyJustPressed(KeyCode.E);
+    }
+
+    public boolean isSelectingLeft() {
+        return isKeyJustPressed(KeyCode.Q);
+    }
 }

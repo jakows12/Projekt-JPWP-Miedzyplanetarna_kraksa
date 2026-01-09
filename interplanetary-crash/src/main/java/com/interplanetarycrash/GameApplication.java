@@ -1,6 +1,8 @@
 package com.interplanetarycrash;
 
 import com.interplanetarycrash.core.Game;
+import com.interplanetarycrash.states.LevelSelectionState;
+
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -20,7 +22,10 @@ public class GameApplication extends Application {
     // Initial window size
     private static final int INITIAL_WIDTH = 1280;
     private static final int INITIAL_HEIGHT = 720;
+
     
+    public static double TotalTime[] = new double[LevelSelectionState.TOTAL_LEVELS];
+
     private Game game;
     private Canvas canvas;
     

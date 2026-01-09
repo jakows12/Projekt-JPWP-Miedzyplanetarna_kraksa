@@ -69,7 +69,7 @@ public class MainMenuState extends State {
         );
         levelsButton.setOnClick(() -> {
             System.out.println("Opening level selection");
-        //    game.getStateManager().changeState(...); - change to LevelSelectionState
+            game.getStateManager().changeState(new LevelSelectionState(game));
         });
         buttons.add(levelsButton);
         

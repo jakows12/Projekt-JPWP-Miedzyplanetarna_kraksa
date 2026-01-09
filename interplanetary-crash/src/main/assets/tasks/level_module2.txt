@@ -1,0 +1,8 @@
+FREQ
+Match the signal waveform and parameters
+5.0,50.0,3.0,SQUARE  
+0.0,10.0
+10.0,100.0
+0.0,6.28
+0.5
+2

@@ -85,7 +85,7 @@ public class MultipleChoiceTask extends Task {
         
         renderer.fillRect(0, 0, GameApplication.LOGICAL_WIDTH,
                          GameApplication.LOGICAL_HEIGHT,
-                         Color.rgb(0, 10, 0));
+                         Color.rgb(0, 20, 0));
         
         renderer.drawCenteredText(
             "REPAIR MODULE - ANSWER QUESTION",

@@ -17,14 +17,15 @@ public class Player {
     
     private Direction currentDirection;
     private boolean isMoving;
+    private boolean isDead = false;
     
     private AnimatedSprite animatedSprite;
     
     // Collision box
     private static final double HITBOX_WIDTH = 16;
     private static final double HITBOX_HEIGHT = 16;
-    private static final double SPRITE_WIDTH = 32;
-    private static final double SPRITE_HEIGHT = 32;
+    private static final double SPRITE_WIDTH = 64;
+    private static final double SPRITE_HEIGHT = 64;
     
     public Player(double startX, double startY) {
         this.x = startX;
@@ -42,55 +43,100 @@ public class Player {
         animatedSprite = new AnimatedSprite();
         AssetManager assets = AssetManager.getInstance();
         
-        // Idle animation (just one frame, but in Animation format)
-        Image[] idleFrames = { assets.getSprite("player_idle") };
-        Animation idleAnim = new Animation(idleFrames, 1.0, true);
-        animatedSprite.addAnimation("idle", idleAnim);
+        Animation idle_left = new Animation(
+            assets.getAnimationFrames("Astronaut-Idle-Left", 2), 
+            0.15, 
+            true);
+
+        Animation idle_right = new Animation(
+            assets.getAnimationFrames("Astronaut-Idle-Right", 2), 
+            0.15, 
+            true);
+
+        animatedSprite.addAnimation("idle_left", idle_left);
+        animatedSprite.addAnimation("idle_right", idle_right);
         
-        // Walking animations (4 frames each, 0.15s per frame = ~7fps for retro look)
-        Animation walk = new Animation(
-            assets.getAnimationFrames("player_walk", 2),
+        Animation walk_left = new Animation(
+            assets.getAnimationFrames("Astronaut-Walking-Left", 2),
             0.15,
             true
         );
-        animatedSprite.addAnimation("walk", walk);
+
+        Animation walk_right = new Animation(
+            assets.getAnimationFrames("Astronaut-Walking-Right", 2),
+            0.15,
+            true
+        );
+
+        animatedSprite.addAnimation("walk_left", walk_left);
+        animatedSprite.addAnimation("walk_right", walk_right);
+
+        Animation death_right = new Animation(
+            assets.getAnimationFrames("Astronaut-Death-Right", 13),
+            0.15,
+            false
+        );
+
+        Animation death_left = new Animation(
+            assets.getAnimationFrames("Astronaut-Death-Left", 13),
+            0.15,
+            false
+        );
+
+        animatedSprite.addAnimation("death_right", death_right);
+        animatedSprite.addAnimation("death_left", death_left);    
         
-        // Start with idle
-        animatedSprite.setAnimation("idle");
+        animatedSprite.setAnimation("idle_right");
     }
     
     /**
      * Update player position and animation
      */
     public void update(double deltaTime, Direction moveDirection) {
-        isMoving = moveDirection != Direction.NONE;
-        
-        if (isMoving) {
-            currentDirection = moveDirection;
-            
-            // Update position based on direction
-            switch (moveDirection) {
-                case UP:
-                    y -= speed * deltaTime;
-                    animatedSprite.setAnimation("walk_right");
-                    break;
-                case DOWN:
-                    y += speed * deltaTime;
-                    animatedSprite.setAnimation("walk_left");
-                    break;
-                case LEFT:
-                    x -= speed * deltaTime;
-                    animatedSprite.setAnimation("walk_left");
-                    break;
-                case RIGHT:
-                    x += speed * deltaTime;
-                    animatedSprite.setAnimation("walk_right");
-                    break;
+        isMoving = moveDirection != Direction.NONE_RIGHT && moveDirection != Direction.NONE_LEFT;
+        if(!isDead) {
+            // Normal movement
+            if (isMoving) {
+                currentDirection = moveDirection;
+                
+                // Update position based on direction
+                switch (moveDirection) {
+                    case UP:
+                        y -= speed * deltaTime;
+                        animatedSprite.setAnimation("walk_right");
+                        break;
+                    case DOWN:
+                        y += speed * deltaTime;
+                        animatedSprite.setAnimation("walk_left");
+                        break;
+                    case LEFT:
+                        x -= speed * deltaTime;
+                        animatedSprite.setAnimation("walk_left");
+                        break;
+                    case RIGHT:
+                        x += speed * deltaTime;
+                        animatedSprite.setAnimation("walk_right");
+                        break;
+                }
+            } else {
+                switch (moveDirection) {
+                    case NONE_LEFT:
+                        animatedSprite.setAnimation("idle_left");
+                        break;
+                    case NONE_RIGHT:
+                        animatedSprite.setAnimation("idle_right");
+                        break;
+                }
             }
         } else {
-            animatedSprite.setAnimation("idle");
+            // Death animation
+            if (currentDirection == Direction.LEFT || currentDirection == Direction.NONE_LEFT || currentDirection == Direction.DOWN) {
+                animatedSprite.setAnimation("death_left");
+            } else {
+                animatedSprite.setAnimation("death_right");
+            }
         }
-        
+
         // Update animation
         animatedSprite.update(deltaTime);
     }
@@ -124,6 +170,10 @@ public class Player {
     public void setPosition(double x, double y) {
         this.x = x;
         this.y = y;
+    }
+
+    public void setDead() {
+        isDead = true;
     }
     
     /**

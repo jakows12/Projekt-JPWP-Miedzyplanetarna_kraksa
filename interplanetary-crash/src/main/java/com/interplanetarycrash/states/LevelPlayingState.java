@@ -11,6 +11,7 @@ import com.interplanetarycrash.ui.InteractionPrompt;
 import com.interplanetarycrash.ui.LifeSupportBar;
 import com.interplanetarycrash.ui.Timer;
 import com.interplanetarycrash.utils.CollisionDetector;
+
 import javafx.geometry.Rectangle2D;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -70,6 +71,16 @@ public class LevelPlayingState extends State {
     
     @Override
     public void update(double deltaTime) {
+        // Check game over
+        if (level.isGameOver()) {
+            level.getPlayer().setDead();
+            if (game.getInputHandler().isConfirming() || game.getInputHandler().isInteracting()) {
+                game.getStateManager().changeState(new LevelPlayingState(game, level.getLevelNumber()));
+            } else if (game.getInputHandler().isPausing()) {
+                game.getStateManager().changeState(new MainMenuState(game));
+            }
+        }
+        
         // Check for pause toggle
         if (game.getInputHandler().isPausing()) {
             togglePause();
@@ -82,22 +93,9 @@ public class LevelPlayingState extends State {
             return;
         }
         
-        // Normal gameplay updates
-        // Check game over
-        if (level.isGameOver()) {
-            level.getPlayer().setDead();
-            if (game.getInputHandler().isConfirming() || game.getInputHandler().isInteracting()) {
-                game.getStateManager().changeState(new LevelPlayingState(game, level.getLevelNumber()));
-            } else if (game.getInputHandler().isPausing()) {
-                game.getStateManager().changeState(new MainMenuState(game));
-            }
-        }
-        
         // Update level (time, life support drain, module animations)
         level.update(deltaTime);
 
-
-        
         // Handle player movement
         updatePlayerMovement(deltaTime);
         

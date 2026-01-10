@@ -1,20 +1,15 @@
 package com.interplanetarycrash.assets;
 
-import com.interplanetarycrash.animation.Animation;
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-
-import com.interplanetarycrash.animation.AnimatedSprite;
 
 /**
  * Singleton class for managing game assets (sprites, fonts, sounds)
@@ -34,7 +29,7 @@ public class AssetManager {
     
     private AssetManager() {}
 
-    private static final String assetsPath = System.getProperty("user.dir") + "\\interplanetary-crash\\src\\main\\assets";
+    private static final String assetsPath = System.getProperty("user.dir") + "/interplanetary-crash/src/main/assets";
 
     public static AssetManager getInstance() {
         if (instance == null) {
@@ -62,7 +57,7 @@ public class AssetManager {
      */
     private void loadFonts() {
         // Try to load custom font from file (JavaFX)
-        try (java.io.FileInputStream fis = new java.io.FileInputStream(assetsPath + "\\fonts\\BoldPixels.ttf")) {
+        try (java.io.FileInputStream fis = new java.io.FileInputStream(assetsPath + "/fonts/BoldPixels.ttf")) {
             javafx.scene.text.Font fxBase = javafx.scene.text.Font.loadFont(fis, 12);
             if (fxBase != null) {
                 System.out.println("Custom font loaded successfully: " + fxBase.getName());
@@ -92,7 +87,7 @@ public class AssetManager {
 
     private void loadSingleAnimation(String name, int frameCount, int scale) {
         for (int i = 1; i <= frameCount; i++) {
-            String path = name + "\\Sprite-" + name + i + ".png";
+            String path = name + "/Sprite-" + name + i + ".png";
             sprites.put(name + i, loadImage(path, scale));
         }
     }
@@ -129,7 +124,7 @@ public class AssetManager {
      */
     private Image loadImage(String relativePath, int scale) {
         try {
-            String fullPath = assetsPath + "\\sprites\\" + relativePath;
+            String fullPath = assetsPath + "/sprites/" + relativePath;
             File file = new File(fullPath);
             if (file.exists()) {
                 FileInputStream fis = new FileInputStream(file);

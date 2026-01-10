@@ -1,10 +1,10 @@
 package com.interplanetarycrash.input;
 
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-
 import java.util.HashSet;
 import java.util.Set;
+
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 
 /**
  * Handles all keyboard input - KEYBOARD ONLY, NO MOUSE
@@ -100,6 +100,10 @@ public class InputHandler {
     
     public boolean isConfirming() {
         return isKeyJustPressed(KeyCode.ENTER);
+    } 
+
+    public boolean isExiting() {
+        return isKeyJustPressed(KeyCode.ESCAPE);
     }
     
     // Arrow keys for menu navigation

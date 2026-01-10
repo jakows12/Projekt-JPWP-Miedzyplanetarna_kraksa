@@ -1,9 +1,10 @@
 package com.interplanetarycrash.tasks;
 
 import com.interplanetarycrash.GameApplication;
+import com.interplanetarycrash.assets.AssetManager;
 import com.interplanetarycrash.input.InputHandler;
 import com.interplanetarycrash.rendering.GameRenderer;
-import com.interplanetarycrash.assets.AssetManager;
+
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
@@ -237,7 +238,7 @@ public class FrequencySpectrumTask extends Task {
             renderResult(renderer);
         } else {
             renderer.drawCenteredText(
-                "↑↓: Select  |  ←→/Q/E: Adjust  |  ENTER: Submit",
+                "↑↓: Select  |  ←→/Q/E: Adjust  |  ENTER: Submit | ESC: Exit",
                 GameApplication.LOGICAL_WIDTH / 2.0,
                 GameApplication.LOGICAL_HEIGHT - 30,
                 smallFont,

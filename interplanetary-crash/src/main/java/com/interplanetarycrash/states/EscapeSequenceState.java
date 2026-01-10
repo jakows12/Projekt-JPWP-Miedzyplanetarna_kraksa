@@ -1,13 +1,10 @@
 package com.interplanetarycrash.states;
 
-import java.text.DecimalFormat;
-
 import com.interplanetarycrash.GameApplication;
 import com.interplanetarycrash.core.Game;
+import com.interplanetarycrash.level.Level;
 import com.interplanetarycrash.rendering.GameRenderer;
 import com.interplanetarycrash.save.SaveManager;
-import com.interplanetarycrash.level.Level;
-import com.interplanetarycrash.states.LevelSelectionState;
 
 
 public class EscapeSequenceState extends State {
@@ -34,7 +31,7 @@ public class EscapeSequenceState extends State {
             }
             saveManager.setBestTotalTime(totalTime);
         } else {
-            saveManager.unlockNextLevel();
+            if(level.getLevelNumber() == saveManager.getUnlockedLevels()) saveManager.unlockNextLevel();
         }
     }
 

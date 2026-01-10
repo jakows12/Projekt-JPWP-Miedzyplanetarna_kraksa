@@ -1,14 +1,20 @@
 package com.interplanetarycrash.tasks;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import com.interplanetarycrash.GameApplication;
 import com.interplanetarycrash.assets.AssetManager;
 import com.interplanetarycrash.input.InputHandler;
 import com.interplanetarycrash.rendering.GameRenderer;
+
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-
-import java.util.*;
 
 /**
  * Logic Gates Task - Build a circuit using logic gates and wires
@@ -280,8 +286,8 @@ public class LogicGatesTask extends Task {
             renderResult(renderer);
         } else {
             String hint = drawingWire 
-                ? "Move to end, press F to finish | BKSP: Cancel"
-                : "Arrows: Move | Q/E: Gate | SPACE: Place | F: Wire | BKSP: Delete | ENTER: Test";
+                ? "Move to end, press F to finish "
+                : "↑↓ ←→ or WSAD: Move | Q/E: Gate | SPACE: Place | F: Wire | BKSP: Delete | ENTER: Test | ESC: Exit";
             
             renderer.drawCenteredText(
                 hint,

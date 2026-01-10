@@ -1,13 +1,15 @@
 package com.interplanetarycrash.level;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.interplanetarycrash.GameApplication;
 import com.interplanetarycrash.assets.AssetManager;
 import com.interplanetarycrash.player.Player;
 import com.interplanetarycrash.tasks.Task;
 import com.interplanetarycrash.tasks.TaskLoader;
-import com.interplanetarycrash.GameApplication;
+
 import javafx.scene.image.Image;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Represents a single game level
@@ -16,8 +18,7 @@ public class Level {
     
     private int levelNumber;
     private int difficulty;
-    private int requiredModules; // How many modules to repair (2-4)
-    
+
     private Player player;
     private Ship ship;
     private List<Module> modules;

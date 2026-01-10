@@ -92,6 +92,12 @@ public class TaskActiveState extends State {
             return;
         }
         
+        if (game.getInputHandler().isExiting()) {
+            // Exit task and return to level playing state
+            game.getStateManager().changeState(levelPlayingState);
+            return;
+        }
+
         // Update task
         task.update(deltaTime, game.getInputHandler());
     }

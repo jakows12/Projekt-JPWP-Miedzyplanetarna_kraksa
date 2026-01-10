@@ -1,9 +1,5 @@
 package com.interplanetarycrash.tasks;
 
-import com.interplanetarycrash.core.Game;
-import com.interplanetarycrash.tasks.LogicGatesTask.GateType;
-import com.interplanetarycrash.tasks.FrequencySpectrumTask.WaveformType;
-
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -12,6 +8,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import com.interplanetarycrash.tasks.FrequencySpectrumTask.WaveformType;
+import com.interplanetarycrash.tasks.LogicGatesTask.GateType;
 
 /**
  * Loads tasks from text files in assets/tasks/
@@ -33,7 +32,7 @@ public class TaskLoader {
     public static Task loadTask(String filename) {
         try {
             // Try to load from resources
-            java.io.FileInputStream stream = new java.io.FileInputStream(System.getProperty("user.dir") + "\\interplanetary-crash\\src\\main\\assets\\tasks\\" + filename);
+            java.io.FileInputStream stream = new java.io.FileInputStream(System.getProperty("user.dir") + "/interplanetary-crash/src/main/assets/tasks/" + filename);
             
             List<String> lines = readLines(stream);
             
@@ -65,7 +64,6 @@ public class TaskLoader {
             
         } catch (Exception e) {
             System.err.println("Error loading task from " + filename + ": " + e.getMessage());
-            e.printStackTrace();
             return createFallbackTask();
         }
     }

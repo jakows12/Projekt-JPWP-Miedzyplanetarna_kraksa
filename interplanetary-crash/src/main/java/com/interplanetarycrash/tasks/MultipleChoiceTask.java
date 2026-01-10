@@ -4,6 +4,7 @@ import com.interplanetarycrash.GameApplication;
 import com.interplanetarycrash.assets.AssetManager;
 import com.interplanetarycrash.input.InputHandler;
 import com.interplanetarycrash.rendering.GameRenderer;
+
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -90,16 +91,16 @@ public class MultipleChoiceTask extends Task {
         renderer.drawCenteredText(
             "REPAIR MODULE - ANSWER QUESTION",
             GameApplication.LOGICAL_WIDTH / 2.0,
-            100,
+            120,
             letterFont,
             GameRenderer.RETRO_GREEN
         );
         
-        double questionY = 200;
+        double questionY = 160;
         renderWrappedText(renderer, question, 200, questionY, 
                          GameApplication.LOGICAL_WIDTH - 400, questionFont);
         
-        double answerStartY = 350;
+        double answerStartY = 330;
         double answerSpacing = 80;
         char[] letters = {'A', 'B', 'C', 'D'};
         
@@ -114,7 +115,7 @@ public class MultipleChoiceTask extends Task {
             renderResult(renderer);
         } else {
             renderer.drawCenteredText(
-                "↑↓ or W/S: Navigate  |  ENTER: Confirm  |  A/B/C/D: Quick select",
+                "↑↓ or W/S: Navigate  |  ENTER: Confirm  |  A/B/C/D: Quick select | ESC: Exit",
                 GameApplication.LOGICAL_WIDTH / 2.0,
                 GameApplication.LOGICAL_HEIGHT - 50,
                 answerFont,
